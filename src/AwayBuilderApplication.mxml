@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:components="awaybuilder.view.components.*"
+	frameRate="60" backgroundFrameRate="5"
+	minWidth="1000" minHeight="720" 
+	backgroundColor="0x333333"
+	showStatusBar="false"
+	usePreloader="false"
+	invoke="invokeHandler(event)" 
+	preinitialize="preinitializeHandler(event)"
+	>
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<fx:Style source="desktop_styles.css"/>
+	
+	<components:CoreEditor id="coreEditor" width="100%" height="100%"/>
+	
+	<fx:Script><![CDATA[
+		import awaybuilder.AwayBuilder;
+		import awaybuilder.desktop.DesktopAppContext;
+		import awaybuilder.desktop.controller.events.OpenFromInvokeEvent;
+		
+		import mx.events.FlexEvent;
+		import mx.events.ResizeEvent;
+
+        private var _context:DesktopAppContext;
+
+		public var splashScreen:SplashScreen;
+		
+        private function preinitializeHandler(event:FlexEvent):void
+        {
+			splashScreen = new SplashScreen();
+            this._context = new DesktopAppContext(DisplayObjectContainer(this.systemManager));
+        }
+
+        private function invokeHandler(event:InvokeEvent):void
+        {
+			if(event.arguments.length == 1)
+            {
+                const extensions:Vector.<String> = new <String>["awd"];
+                var filePath:String = event.arguments[0];
+                var file:File = new File(filePath);
+                if(file.exists && extensions.indexOf(file.extension) >= 0)
+                {
+                    this._context.eventDispatcher.dispatchEvent(new OpenFromInvokeEvent(OpenFromInvokeEvent.OPEN_FROM_INVOKE, file));
+                }
+            }
+        }
+		
+	]]></fx:Script>
+	
+</s:WindowedApplication>
